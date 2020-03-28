@@ -20,5 +20,26 @@ module.exports = {
         });
 
         return response.json({ id });
-    } 
+    },
+    
+    async delete(request, response) {
+        const { id } = request.params; /* parâmetro de rota */
+        const ong_id = request.headers.authorization; /* vai buscar o id da ong através do headers.authorization */
+    
+        const incident = await connection('incidents')
+            .where('id', id) // comparando os ids pra não apagar de outra ong
+            .select('ong_id') // só precisa dessa coluna
+            .first(); //vai retornar apenas 1 resultado
+        
+        if (incident.ong_id !== ong_id) {
+            return response.status(401).json({ error: 'Operation not permitted.'}) // não autorizado
+        }
+
+        await connection('incidents').where('id', id).delete(); // deleta os registros dentro da tabela do bd
+
+        return response.status(204).send(); // resposta pro frontend que não tem conteúdo
+
+
+
+    }
 };
