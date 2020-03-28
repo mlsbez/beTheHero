@@ -2,7 +2,24 @@ const connection = require('../database/connection');
 
 module.exports = {
     async index (request, response) { // rota para listar todos os casos, normalmente se utiliza index para listagem 
-        const incidents = await connection('incidents').select('*');
+        const { page = 1} = request.query; // colocar paginação
+        
+        const [count] = await connection('incidents').count(); // [count] = count[0]
+            
+        const incidents = await connection('incidents')
+            .join('ongs', 'ongs.id', '=', 'incidents.ong_id') // adiciona dados da ONG nos casos (email, wpp)
+            .limit(5)
+            .offset((page -1) * 5) // pra pular os registros e mostrar por cada página
+            .select(['incidents.*', 
+            'ongs.name', 
+            'ongs.email',
+            'ongs.whatsapp',
+            'ongs.city',
+            'ongs.uf'
+        ]);
+
+        // mostra no cabeçalho da requisição a quantidade total de casos
+        response.header('X-Total-Count', count['count(*)']); // nome do cabeçalho tem esse padrão nesses casos. o count(*) é a resposta do console.log(count);
     
         return response.json(incidents);
     },
