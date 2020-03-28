@@ -14,5 +14,7 @@ routes.post('/ongs', OngController.create);
 routes.get('/incidents', IncidentController.index);
 routes.post('/incidents', IncidentController.create);
 
+routes.delete('/incidents/:id', IncidentController.delete); /* id do caso que ela quer deletar */
+
 /* exportar uma variável para dentro de um arquivo */
 module.exports = routes; /* exportando as rotas para o index.js */
