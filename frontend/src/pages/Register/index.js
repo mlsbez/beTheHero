@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FiArrowLeft } from 'react-icons/fi'; /* feather icons */
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import api from '../../services/api';
 
 import './styles.css';
@@ -13,6 +13,8 @@ export default function Register() {
     const [whatsapp, setWhatsapp] = useState('');
     const [city, setCity] = useState('');
     const [uf, setUf] = useState('');
+
+    const history = useHistory();
     
     
     async function handleRegister(e) { /* responsável por fazer o cadastro do usuário. e é o evento de submit do formulário */
@@ -30,6 +32,8 @@ export default function Register() {
             const response = await api.post('ongs', data); /* a resposta dessa chamada é o ID da ONG */
                 
             alert(`Seu ID de acesso: ${response.data.id}`); /* usa a crase em vez das aspas pra poder colocar variáveis dentro do texto */
+            history.push('/'); /* envia para a rota raiz (login) */
+        
         } catch (err) {
             alert('Erro no cadastro, tente novamente.');
         }
